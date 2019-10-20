@@ -9,6 +9,6 @@ import (
 func main() {
 	const distance = 56000000
 	var hours = 28 * 24
-	var spd = distance/hours
+	var spd = distance / hours
 	fmt.Println(spd, "km/hr")
 }
