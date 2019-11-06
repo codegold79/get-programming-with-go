@@ -10,15 +10,17 @@ import (
 // play each guess and whether it was too big or too small.
 func main() {
 	var number = 33
-	var guess int
 
 	for {
-		guess = rand.Intn(100) + 1
+		guess := rand.Intn(100) + 1
+
 		if guess == number {
-			fmt.Printf("\nThe computer guessed %v correctly.", guess)
+			fmt.Printf("The computer guessed %v correctly.\n", guess)
 			break
+		} else if guess > number {
+			fmt.Printf("The computer guessed %v (too big).\n", guess)
 		} else {
-			fmt.Printf("\nThe computer guessed %v incorrectly.", guess)
+			fmt.Printf("The computer guessed %v (too small).\n", guess)
 		}
 	}
 }
