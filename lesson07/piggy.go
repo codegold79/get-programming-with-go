@@ -26,6 +26,7 @@ func main() {
 			piggy += 25
 			fmt.Print("Added a quarter. New balance is ")
 		}
-		fmt.Printf("$%5.2d.\n", piggy/100)
+
+		fmt.Printf("$%5.2f.\n", float32(piggy)/100)
 	}
 }
