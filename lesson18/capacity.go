@@ -7,11 +7,15 @@ package main
 import "fmt"
 
 func main() {
-	slice := make([]int, 1)
+	slice := make([]int, 3)
+	sCap := cap(slice)
+
 	fmt.Printf("initial slice %v, len: %v, cap: %v\n", slice, len(slice), cap(slice))
-	for i := 1; i < 11; i++ {
+	for i := 1; i < 10000; i++ {
 		slice = append(slice, i)
-		fmt.Printf("%v: %v, len: %v, cap: %v\n", i, slice, len(slice), cap(slice))
+		if sCap != cap(slice) {
+			fmt.Printf("%d, ", cap(slice))
+			sCap = cap(slice)
+		}
 	}
-	fmt.Println("It does seem that append always doubles the capacity when the underlying array runs out of room.")
 }
