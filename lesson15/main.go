@@ -57,11 +57,11 @@ func fToCRow(rowFormat string) {
 	}
 }
 
-type rowGenerator func(string)
+type rowGeneratorFunc func(string)
 
-func drawTable(rowGen rowGenerator, header1 string, header2 string) {
+func drawTable(rowGenFn rowGeneratorFunc, header1 string, header2 string) {
 	fmt.Println("\n=======================")
 	fmt.Printf("| %-9s| %-9s|\n", header1, header2)
 	fmt.Println("=======================")
-	rowGen("| %-9.2f| %-9.2f|")
+	rowGenFn ("| %-9.2f| %-9.2f|")
 }
