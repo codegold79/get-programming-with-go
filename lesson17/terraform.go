@@ -1,11 +1,14 @@
 // Experiment: terraform.go
-// Write a program to terraform a slice of strings by prepending each planet with "New " .
+// Write a program to terraform a slice of strings by prepending each planet with "New ".
 // Use your program to terraform Mars, Uranus, and Neptune.
 // Your first iteration can use a terraform function, but your final implementation should
 // introduce a Planets type with a terraform method, similar to sort.StringSlice.
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Planets []string
 
@@ -15,7 +18,7 @@ func main() {
 	listToTerraform := []int{3, 6, 7}
 
 	// First iteration uses terraform function
-	planets = Planets{"Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"}
+	planets = []string{"Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"}
 	terraform(planets, listToTerraform)
 	fmt.Println(planets)
 
@@ -26,14 +29,19 @@ func main() {
 	fmt.Println(planets)
 }
 
-func terraform(planets Planets, listToTerraform []int) {
+func terraform(planets []string, listToTerraform []int) {
 	for _, p := range listToTerraform {
 		planets[p] = "New " + planets[p]
 	}
 }
 
-func (planets Planets) terraform(listToTerraform []int) {
+func (ps Planets) terraform(listToTerraform []int) {
 	for _, p := range listToTerraform {
-		planets[p] = "New " + planets[p]
+		ps[p] = "New " + ps[p]
 	}
+}
+
+func (ps Planets) String() string {
+	ss := []string(ps)
+	return strings.Join(ss, ", ")
 }
