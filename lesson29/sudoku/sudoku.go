@@ -11,10 +11,10 @@ type Sudoku struct {
 }
 
 var (
-	ErrFixed           = errors.New("can't change original sudoku digits")
-	ErrDupeRow         = errors.New("can't set duplicate digit in row")
-	ErrDupeCol         = errors.New("can't set duplicate digit in column")
-	ErrDupeSubReg      = errors.New("can't set duplicate digit in subregion")
+	ErrFixed           = errors.New("original sudoku digits are fixed")
+	ErrDupeRow         = errors.New("duplicate digit in row")
+	ErrDupeCol         = errors.New("duplicate digit in column")
+	ErrDupeSubReg      = errors.New("duplicate digit in subregion")
 	ErrCoordOutOfRange = errors.New("row, and/or column is not between 0 and 8, inclusive")
 	ErrDigitOutOfRange = errors.New("digit is not between 1 and 9, inclusive")
 )
@@ -40,45 +40,39 @@ func (s *Sudoku) PrintBoard() {
 }
 
 func (s *Sudoku) SetDigit(row, col, digit int8) error {
-	if !isCoordValid(row, col) {
-		return fmt.Errorf("setting %d at row %d, col %d): %w", digit, row, col, ErrCoordOutOfRange)
-	}
+	errFmt := "setting %d at row %d, col %d): %w"
 
-	if !isDigitValid(digit) {
-		return fmt.Errorf("setting %d at row %d, col %d: %w", digit, row, col, ErrDigitOutOfRange)
+	switch {
+	case !isCoordValid(row, col):
+		return fmt.Errorf(errFmt, digit, row, col, ErrCoordOutOfRange)
+	case !isDigitValid(digit):
+		return fmt.Errorf(errFmt, digit, row, col, ErrDigitOutOfRange)
+	case s.isDigitFixed(row, col):
+		return fmt.Errorf(errFmt, digit, row, col, ErrFixed)
+	case s.isDigitInRow(row, col, digit):
+		return fmt.Errorf(errFmt, digit, row, col, ErrDupeRow)
+	case s.isDigitInCol(row, col, digit):
+		return fmt.Errorf(errFmt, digit, row, col, ErrDupeCol)
+	case s.isDigitInSubReg(row, col, digit):
+		return fmt.Errorf(errFmt, digit, row, col, ErrDupeSubReg)
+	default:
+		s.current[row][col] = digit
 	}
-
-	if s.isDigitFixed(row, col) {
-		return fmt.Errorf("setting %d at row %d, col %d: %w", digit, row, col, ErrFixed)
-	}
-
-	if s.isDigitInRow(row, col, digit) {
-		return fmt.Errorf("setting %d at row %d, col %d: %w", digit, row, col, ErrDupeRow)
-	}
-
-	if s.isDigitInCol(row, col, digit) {
-		return fmt.Errorf("setting %d at row %d, col %d: %w", digit, row, col, ErrDupeCol)
-	}
-
-	if s.isDigitInSubReg(row, col, digit) {
-		return fmt.Errorf("setting %d at row %d, col %d: %w", digit, row, col, ErrDupeSubReg)
-	}
-
-	s.current[row][col] = digit
 
 	return nil
 }
 
 func (s *Sudoku) ClearDigit(row, col int8) error {
-	if !isCoordValid(row, col) {
-		return fmt.Errorf("clearing row %d, col %d: %w", row, col, ErrCoordOutOfRange)
-	}
+	errFmt := "clearing row %d, col %d: %w"
 
-	if s.isDigitFixed(row, col) {
-		return fmt.Errorf("clearing row %d, col %d: %w", row, col, ErrFixed)
+	switch {
+	case !isCoordValid(row, col):
+		return fmt.Errorf(errFmt, row, col, ErrCoordOutOfRange)
+	case s.isDigitFixed(row, col):
+		return fmt.Errorf(errFmt, row, col, ErrFixed)
+	default:
+		s.current[row][col] = 0
 	}
-
-	s.current[row][col] = 0
 
 	return nil
 }
