@@ -7,10 +7,6 @@ function from the strings package), and sends all the words, one by one, to the
 next pipeline stage.
 */
 
-// take string
-// split up into words (strings.Fields)
-// send words to next stage
-
 package main
 
 import (
