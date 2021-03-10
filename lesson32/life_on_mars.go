@@ -11,7 +11,7 @@ import (
 func main() {
 	// receive messages from Mars
 	marsToEarth := make(chan []message)
-	go receiveMarsMessages(marsToEarth)
+	go receiveMarsMessages(marsToEarth, printMessages)
 
 	gridMaxPos := image.Point{10, 10}
 	startPos := image.Point{0, 0}
@@ -125,7 +125,7 @@ func (r *RoverDriver) Right() {
 	r.cmdCh <- right
 }
 
-func receiveMarsMessages(incoming chan []message) {
+func receiveMarsMessages(incoming chan []message, handleMsgsFn func([]message)) {
 	finished := time.After(receiveTimePerDay)
 
 	for {
@@ -133,17 +133,22 @@ func receiveMarsMessages(incoming chan []message) {
 		for {
 			select {
 			case <-finished:
+				finished = time.After(receiveTimePerDay)
 			case msgs := <-incoming:
-				for _, m := range msgs {
-					log.Printf(
-						"earth received report of life sign level %d from %s at %v",
-						m.lifeSigns,
-						m.rover,
-						m.pos,
-					)
-				}
+				handleMsgsFn(msgs)
 			}
 		}
+	}
+}
+
+func printMessages(msgs []message) {
+	for _, m := range msgs {
+		log.Printf(
+			"earth received report of life sign level %d from %s at %v",
+			m.lifeSigns,
+			m.rover,
+			m.pos,
+		)
 	}
 }
 
